@@ -68,19 +68,3 @@ document.getElementById('showIndex').addEventListener('click', function () {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
