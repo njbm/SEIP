@@ -16,13 +16,13 @@ try {
 
 // Functions for CRUD operations
 
-function createRecord($name, $email, $picture)
+function createSlides($title, $alt, $caption, $src)
 {
     global $conn;
 
-    $sql = "INSERT INTO crud2 (name, email, picture) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO crud3 (title, alt, caption, src) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$name, $email, $picture]);
+    $stmt->execute([$title, $alt, $caption, $src]);
 }
 
 
@@ -39,16 +39,16 @@ function updateRecord($id, $name, $email)
 {
     global $conn;
 
-    $sql = "UPDATE crud2 SET name = ?, email = ? WHERE id = ?";
+    $sql = "UPDATE crud3 SET title = ?, alt = ?, caption=?, src=?  WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$name, $email, $id]);
+    $stmt->execute([$id, $title, $alt, $caption, $src]);
 }
 
 function deleteRecord($id)
 {
     global $conn;
 
-    $sql = "DELETE FROM crud2 WHERE id = ?";
+    $sql = "DELETE FROM crud3 WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$id]);
 }
@@ -57,26 +57,30 @@ function deleteRecord($id)
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['create'])) {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
+        $title = $_POST['title'];
+        $alt = $_POST['alt'];
+        $caption = $_POST['caption'];
+        $src = $_POST['picture'];
 
         // Check if a file was uploaded
         if (isset($_FILES['picture']) && $_FILES['picture']['error'] === UPLOAD_ERR_OK) {
-            $picture = $_FILES['picture']['name'];
+            $src = $_FILES['picture']['name'];
             $tempFile = $_FILES['picture']['tmp_name'];
             $targetPath = "uploads/"; // Specify the folder to save the uploaded picture
 
             // Move the uploaded picture to the target folder
-            move_uploaded_file($tempFile, $targetPath . $picture);
+            move_uploaded_file($tempFile, $targetPath . $src);
         }
 
-        createRecord($name, $email, $picture);
+        createRecord($title, $alt, $caption, $src);
     } elseif (isset($_POST['update'])) {
         $id = $_POST['id'];
-        $name = $_POST['name'];
-        $email = $_POST['email'];
+        $title = $_POST['title'];
+        $alt = $_POST['alt'];
+        $caption = $_POST['caption'];
+        $src = $_POST['picture'];
 
-        updateRecord($id, $name, $email);
+        updateRecord($id, $title, $alt, $caption, $src);
     } elseif (isset($_POST['delete'])) {
         $id = $_POST['id'];
 
@@ -106,13 +110,15 @@ $records = readRecords();
     <h2>Create Record</h2>
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
         <label for="name">Name:</label>
-        <input type="text" name="name" required>
+        <input type="text" name="title" class="form-control" placeholder="Give a Title">
 
         <label for="email">Email:</label>
-        <input type="email" name="email" required>
+        <input type="text" name="alt" class="form-control" placeholder="Alternative Name">
+
+        <input type="text" name="caption" class="form-control" placeholder="Add a Caption">
 
         <label for="picture">Picture:</label>
-        <input type="file" name="picture" accept="image/*">
+        <input type="file" name="picture" class="form-control" placeholder="Choose a file">
 
         <input type="submit" name="create" value="Create">
     </form>
