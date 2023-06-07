@@ -16,7 +16,7 @@ try {
 
 // Functions for CRUD operations
 
-function createSlides($title, $alt, $caption, $src)
+function createRecord($title, $alt, $caption, $src)
 {
     global $conn;
 
@@ -35,7 +35,7 @@ function readRecords()
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function updateRecord($id, $name, $email)
+function updateRecord($id, $title, $alt, $caption, $src)
 {
     global $conn;
 
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $title = $_POST['title'];
         $alt = $_POST['alt'];
         $caption = $_POST['caption'];
-        $src = $_POST['picture'];
+
 
         // Check if a file was uploaded
         if (isset($_FILES['picture']) && $_FILES['picture']['error'] === UPLOAD_ERR_OK) {
@@ -170,12 +170,16 @@ $records = readRecords();
         <!-- Update Form -->
         <h2>Edit Record</h2>
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-            <input type="hidden" name="id" value="<?php echo $editRecord['id']; ?>">
             <label for="name">Name:</label>
-            <input type="text" name="name" value="<?php echo $editRecord['name']; ?>" required>
+            <input type="text" name="title" class="form-control" placeholder="Give a Title">
 
             <label for="email">Email:</label>
-            <input type="email" name="email" value="<?php echo $editRecord['email']; ?>" required>
+            <input type="text" name="alt" class="form-control" placeholder="Alternative Name">
+
+            <input type="text" name="caption" class="form-control" placeholder="Add a Caption">
+
+            <label for="picture">Picture:</label>
+            <input type="file" name="picture" class="form-control" placeholder="Choose a file">
 
             <input type="submit" name="update" value="Update">
         </form>
